@@ -1,12 +1,15 @@
 <?php
 
+$id = $_POST['id'];
 $config = parse_ini_file('/var/myapp/config.ini', true);
 
-$servername = 'localhost';
+$servername ='localhost';
 $port = $config['postgresql']['port'];
 $username = $config['postgresql']['username'];
 $password = $config['postgresql']['password'];
 $dbname = $config['postgresql']['dbname'];
+
+$tableName = $config['postgresql']['tableName'];
 
 $connection_string = (string)"host={$servername} port={$port} dbname={$dbname} user={$username} password={$password}";
 
@@ -15,18 +18,21 @@ if(!$conn){
 	die('Connection failed: ' . pg_last_error());
 }
 
-$sql = 'SELECT * FROM list';
-$DBData = pg_query($conn, $sql);
-$returnArray = array();
-	
-if(pg_num_rows($DBData) > 0){
-	while($row = pg_fetch_assoc($DBData)){
-		array_push($returnArray, $row);
-	}
+$sql = "DELETE FROM {$tableName} WHERE id IN (" . implode(',', (array)$id) . ")";
+
+if (pg_query($conn, $sql)){
+	echo "Deleted successfully\n";
+} else {
+	echo "Error: " . pg_last_error() . "\n";
+}
+
+if (pg_query($conn, 'VACUUM')){
+	echo "Vacuumed successfully";
+} else {
+	echo "Error: " . pg_last_error();
 }
 
 pg_close($conn);
 
-echo json_encode($returnArray);
-
 ?>
+

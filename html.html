@@ -7,17 +7,35 @@
 	</head>
 	<body>
 		<h2> sql </h2>
-		<form autocomplete='on'>
-			Name: <input type='text' id='name' autocomplete='on'><br>
-			Age: <input type='text' id='age' autocomplete='on'><br>
-			E-Mail: <input type='text' id='email' autocomplete='on'><br><br>
-		</form>
-		<button type='button' onclick='submit_input();'>submit</button>
 		<button type='button' onclick='refresh();'>refresh</button>
-		<hr>
-		<table id='table'>
-		</table>
 		<button type='button' onclick='deleteData();'>delete</button>
+		<hr>
+		<table>
+			<tr>
+				<th class='id'> id </th>
+				<th class='name'> name </th>
+				<th class='price'> price </th>
+				<th class='type'> type </th>
+				<th class='description'> description </th>
+				<th class='etc'></th>
+			</tr>
+			<tbody id='table'></tbody>
+			<tr><td colspan='6'> - </td></tr>
+			<tr>
+				<td class='id'> </td>
+				<td class='name'> <input type='text' id='name' autocomplete='off'> </td>
+				<td class='price'> <input type='text' id='price' autocomplete='off'> </td>
+				<td class='type'>
+					<select id='type'></select>
+				</td>
+				<td class='description'>
+					<textarea id='description' rows='1' cols='50' autocomplete='off'></textarea> </td>
+				<td class='etc'>
+					<button type='button' onclick='submit_input();'>submit</button>
+					<button type='button' onclick='deleteData();'>delete</button>
+				</td>
+			</tr>
+		</table>
 		<script src='scripts.js'></script>
 	</body>
 </html>

@@ -1,8 +1,59 @@
+table {
+	border:solid 1px black;
+	border-collapse:collapse;
+}
+
+tr {
+	border:solid 1px black;
+}
+
+td {
+        border:none 1px black;
+        padding:3px 10px;
+        text-align:center;
+	width:5%
+}
+
+.id {
+	border:solid 1px black;
+}
+
+.id , .type {
+	width:10%;
+}
+
+.name , .price {
+	width:15%;
+}
+
+.description {
+	width:40%;
+}
+
+textarea {
+	text-align:center;
+}
+
+input {
+	width:100%;
+	text-align:center;
+}
+
+.etc {
+	width:5%;
+	display:flex;
+}
+
+.etc input[type='checkbox'] {
+	width:20px;
+	height:20px;
+}
+.etc button {
+	width:60px;
+	height:30px;
+}
+
 #table {
-	border:'solid 1px black';
+	max-height:30px;
+	overflow-y:auto;
 }
-
-#table td {
-	text-align:'center';
-}
-

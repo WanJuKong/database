@@ -1,88 +1,175 @@
 const table = document.getElementById('table');
 
+let typelist = ['p','r','d'];
+
 let checklist = [];
 
+class Input {
+	constructor(id){
+		this.id = id;
+		this.name = document.getElementById(id + "name");
+		this.price = document.getElementById(id + "price");
+		this.type = document.getElementById(id + "type");
+		this.description = document.getElementById(id + "description");
+	}
+	isFilled(){
+		if(this.name.value === ''
+		|| this.price.value === ''
+		|| this.type.value === ''){
+			return false;
+		}
+		return true;
+	}
+	clear(){
+		this.name.value = '';
+		this.price.value = '';
+		this.description.value = '';
+	}
+}
+/*
 const input = {
 	name : document.getElementById('name'),
-	age : document.getElementById('age'),
-	email : document.getElementById('email'),
-	filled : function(){
+	price : document.getElementById('price'),
+	type : document.getElementById('type'),
+	description : document.getElementById('description'),
+	isFilled : function(){
 		if(this.name.value === '' 
-		|| this.age.value === ''
-		|| this.email.value === ''){
+		|| this.price.value === ''
+		|| this.type.value === ''){
 			return false;
 		}
 		return true;
 	},
 	clear : function(){
 		this.name.value = '';
-		this.age.value = '';
-		this.email.value = '';
+		this.price.value = '';
+		this.type.value = '';
+		this.description.value = '';
 	}
 }
+*/
 
-function submit_input() {
-	if(!input.filled()){
-		console.error('not filled');
-		return -1;
-	}
-	const xhr = new XMLHttpRequest();
-	const url = 'submit.php';
-	const form = new FormData();
-	form.append('name', input.name.value);
-	form.append('age', input.age.value);
-	form.append('email', input.email.value);
-	input.clear();
-	xhr.open ('POST', url, true);
-	xhr.onreadystatechange = function(){
-		if(xhr.readyState === 4 && xhr.status === 200){
-			var response = xhr.responseText;
-			console.log(response);
-			refresh();
+function typeListSet(){
+	return 0;
+}
+
+function typeSet(id, selected = undefined){
+	let htmlText = "";
+	for (let index in typelist){
+		let type=typelist[index];
+		htmlText += "<option value='" + type
+			+ (selected === type ? "' selected>" : "'>")
+			+ type + "</select>";
 		}
+		document.getElementById(id).innerHTML= htmlText;
 	}
-	xhr.send(form);
-};
 
-function refresh(){
-	const xhr = new XMLHttpRequest();
-	const url = 'get_all.php';
-	xhr.open('POST', url, true);
-	xhr.onreadystatechange = function(){
-		if(xhr.readyState === 4 && xhr.status === 200){
-			let response = xhr.responseText;
-			let responseArr=JSON.parse(response);
+	function submit_input() {
+		const input = new Input('');
+		if(!input.isFilled()){
+			console.warn('not filled');
+			return -1;
+		}
+		const xhr = new XMLHttpRequest();
+		const url = './php/submit.php';
+		const form = new FormData();
+		form.append('name', input.name.value);
+		form.append('price', input.price.value);
+		form.append('type', input.type.value);
+		form.append('description', input.description.value);
+		input.clear();
+		xhr.open ('POST', url, true);
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState === 4 && xhr.status === 200){
+				var response = xhr.responseText;
+				console.log(response);
+				refresh();
+			}
+		}
+		xhr.send(form);
+	};
+
+
+	function get_all(type = 'info', callback){
+		const xhr = new XMLHttpRequest();
+		const url = './php/get_all.php';
+		const form = new FormData();
+		form .append('type', type);
+		xhr.open('POST', url, true);
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState === 4 && xhr.status === 200){
+				checklist=[];
+				let response = xhr.responseText;
+				callback(response);
+			}
+		}
+		xhr.send(form);
+	}
+
+	function refresh(){
+		typeListSet();
+		typeSet('type');
+		rearrange();
+		get_all('info', function(response){
+			let responseArr = JSON.parse(response);
 			displayTable(table, responseArr);
 			console.log('table refreshed.');
+		});
+	}
+
+	function displayTable(table, Arr){
+	table.innerHTML = 'refreshing...'
+		HTMLstring = '';
+		for(let row in Arr){
+			HTMLstring += "<tr>";
+			for(let element in Arr[row]){
+				HTMLstring += "<td class='" + element + "' id='" + Arr[row]['id'] + element + "'>" + Arr[row][element]; + "</td>";
+			}
+			HTMLstring += "<td class='etc'>" + htmlOptionText(Arr[row]['id']) + '</td>';
+			HTMLstring += '</tr>';
+		}
+		table.innerHTML = HTMLstring;
+	}
+
+	function htmlOptionText(id){
+		let button_text = "<button type='button' id='"
+			+ 'b' + id
+			+ "'onclick='buttonClicked(this.id, this.innerHTML)'>"
+			+ "change"	//innerHTML
+			+ "</button>";
+		let checkbox_text = "<input type='checkbox' id='"
+			+ 'c' + id
+			+ "' onchange='checkboxChanged(this.id, this.checked)'>";
+		return button_text + checkbox_text;
+	}
+
+	function buttonClicked(id, state){
+		const button = document.getElementById(id);
+		id = id.slice(1);
+		if(state === "change"){
+			const input = new Input(id);
+			input.name.innerHTML = "<input id='i" + id + "name' value='" + input.name.innerHTML +"'>";
+			input.price.innerHTML = "<input id='i" + id + "price' value='" + input.price.innerHTML +"'>";
+			let selected = input.type.innerHTML;
+			input.type.innerHTML = "<select id='i" + id + "type'></select>";
+			typeSet("i" + id + "type", selected);
+			input.description.innerHTML = "<textarea rows='1' cols='50' id='i" + id + "description'>" + input.description.innerHTML + "</textarea>";
+			button.innerHTML = "update";
+		} else {
+			const input = new Input('i' + id);
+			if(!input.isFilled()){
+				console.warn("not filled");
+				return -1;
+			}
+		update_input(id, input);
 		}
 	}
-	xhr.send();
-}
 
-function displayTable(table, Arr){
-table.innerHTML = 'refreshing...'
-	HTMLstring = '';
-	for(let row in Arr){
-		HTMLstring += '<tr>';
-		for(let element in Arr[row]){
-			HTMLstring += '<td>' + Arr[row][element]; + '</td>';
-		}
-		HTMLstring += '<td>' + checkboxText(Arr[row]['id']) + '</td>';
-		HTMLstring += '</tr>';
-	}
-	table.innerHTML = HTMLstring;
-}
-
-function checkboxText(id){
-	let text = "<input type='checkbox' id='"
-		+ id
-		+ "' onchange='checkboxChanged(this.id, this.checked)'>";
-	return text;
-}
-
-function checkboxChanged(id, checked){
-	if(checked){
-		checklist.push(id);
+	function checkboxChanged(id, checked){
+		id = id.slice(1);
+		if(checked){
+			checklist.push(id);
+			checklist.sort((a, b) => a - b);
 		console.log(id + "'th element checked.\nchecklist=" + checklist);
 	} else {
 		checklist=checklist.filter(item => item !== id);
@@ -90,14 +177,38 @@ function checkboxChanged(id, checked){
 	}
 }
 
+function update_input(id, input){
+	const form = new FormData();
+	const xhr = new XMLHttpRequest();
+	const url = './php/update.php';
+	form.append('id', id);
+	form.append('name', input.name.value);
+	form.append('price', input.price.value);
+	form.append('type', input.type.value);
+	form.append('description', input.description.value);
+	xhr.open('POST', url, true);
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState === 4 && xhr.status === 200){
+			let response = xhr.responseText;
+			console.log(response);
+			refresh();
+		}
+	}
+	xhr.send(form);
+}
+
 function deleteData(){
-	if(checklist.length == 0){
-		console.error('Element for delete not selected')
+	if(checklist.length === 0){
+		console.warn('Element for delete not selected');
+		return -1;
+	}
+	if(!confirm('Are you sure you want to delete this element?\n' + checklist)){
+		console.warn('Delete canseled');
 		return -1;
 	}
 	const form = new FormData();
 	const xhr = new XMLHttpRequest();
-	const url = 'delete.php';
+	const url = './php/delete.php';
 	form.append('id', checklist);
 	checklist = [];
 	xhr.open('POST', url, true);
@@ -111,5 +222,17 @@ function deleteData(){
 	xhr.send(form);
 }
 
+function rearrange(){
+	const xhr = new XMLHttpRequest();
+	const url = './php/rearrange.php';
+	xhr.open('POST', url, false);
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState ===4 && xhr.status === 200){
+			let response = xhr.responseText;
+			console.log(response);
+		}
+	}
+	xhr.send();
+}
 
 refresh();
