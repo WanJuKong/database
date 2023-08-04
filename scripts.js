@@ -60,116 +60,114 @@ function typeSet(id, selected = undefined){
 		htmlText += "<option value='" + type
 			+ (selected === type ? "' selected>" : "'>")
 			+ type + "</select>";
-		}
-		document.getElementById(id).innerHTML= htmlText;
 	}
+	document.getElementById(id).innerHTML= htmlText;
+}
 
-	function submit_input() {
-		const input = new Input('');
+function submit_input() {
+	const input = new Input('');
+	if(!input.isFilled()){
+		console.warn('not filled');
+		return -1;
+	}
+	const xhr = new XMLHttpRequest();
+	const url = './php/submit.php';
+	const form = new FormData();
+	form.append('name', input.name.value);
+	form.append('price', input.price.value);
+	form.append('type', input.type.value);
+	form.append('description', input.description.value);
+	input.clear();
+	xhr.open ('POST', url, true);
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState === 4 && xhr.status === 200){
+			var response = xhr.responseText;
+			console.log(response);
+			refresh();
+		}
+	}
+	xhr.send(form);
+};
+
+function get_all(table = 'info', callback){
+	const xhr = new XMLHttpRequest();
+	const url = './php/get_all.php';
+	const form = new FormData();
+	form.append('table', table);
+	xhr.open('POST', url, true);
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState === 4 && xhr.status === 200){
+			checklist=[];
+			let response = xhr.responseText;
+			callback(response);
+		}
+	}
+	xhr.send(form);
+}
+
+function refresh(){
+	typeListSet();
+	typeSet('type');
+	rearrange();
+	get_all('info', function(response){
+		let responseArr = JSON.parse(response);
+		displayTable(table, responseArr);
+		console.log('table refreshed.');
+	});
+}
+function displayTable(table, Arr){
+	table.innerHTML = 'refreshing...'
+	HTMLstring = '';
+	for(let row in Arr){
+		HTMLstring += "<tr>";
+		for(let element in Arr[row]){
+			HTMLstring += "<td class='" + element + "' id='" + Arr[row]['id'] + element + "'>" + Arr[row][element]; + "</td>";
+		}
+		HTMLstring += "<td class='etc'>" + htmlOptionText(Arr[row]['id']) + '</td>';
+		HTMLstring += '</tr>';
+	}
+	table.innerHTML = HTMLstring;
+}
+
+function htmlOptionText(id){
+	let button_text = "<button type='button' id='"
+		+ 'b' + id
+		+ "'onclick='buttonClicked(this.id, this.innerHTML)'>"
+		+ "change"	//innerHTML
+		+ "</button>";
+	let checkbox_text = "<input type='checkbox' id='"
+		+ 'c' + id
+		+ "' onchange='checkboxChanged(this.id, this.checked)'>";
+	return button_text + checkbox_text;
+}
+
+function buttonClicked(id, state){
+	const button = document.getElementById(id);
+	id = id.slice(1);
+	if(state === "change"){
+		const input = new Input(id);
+		input.name.innerHTML = "<input id='i" + id + "name' value='" + input.name.innerHTML +"'>";
+		input.price.innerHTML = "<input id='i" + id + "price' value='" + input.price.innerHTML +"'>";
+		let selected = input.type.innerHTML;
+		input.type.innerHTML = "<select id='i" + id + "type'></select>";
+		typeSet("i" + id + "type", selected);
+		input.description.innerHTML = "<textarea rows='1' cols='50' id='i" + id + "description'>" + input.description.innerHTML + "</textarea>";
+		button.innerHTML = "update";
+	} else {
+		const input = new Input('i' + id);
 		if(!input.isFilled()){
-			console.warn('not filled');
+			console.warn("not filled");
 			return -1;
 		}
-		const xhr = new XMLHttpRequest();
-		const url = './php/submit.php';
-		const form = new FormData();
-		form.append('name', input.name.value);
-		form.append('price', input.price.value);
-		form.append('type', input.type.value);
-		form.append('description', input.description.value);
-		input.clear();
-		xhr.open ('POST', url, true);
-		xhr.onreadystatechange = function(){
-			if(xhr.readyState === 4 && xhr.status === 200){
-				var response = xhr.responseText;
-				console.log(response);
-				refresh();
-			}
-		}
-		xhr.send(form);
-	};
-
-
-	function get_all(type = 'info', callback){
-		const xhr = new XMLHttpRequest();
-		const url = './php/get_all.php';
-		const form = new FormData();
-		form .append('type', type);
-		xhr.open('POST', url, true);
-		xhr.onreadystatechange = function(){
-			if(xhr.readyState === 4 && xhr.status === 200){
-				checklist=[];
-				let response = xhr.responseText;
-				callback(response);
-			}
-		}
-		xhr.send(form);
+	update_input(id, input);
 	}
+}
 
-	function refresh(){
-		typeListSet();
-		typeSet('type');
-		rearrange();
-		get_all('info', function(response){
-			let responseArr = JSON.parse(response);
-			displayTable(table, responseArr);
-			console.log('table refreshed.');
-		});
-	}
-
-	function displayTable(table, Arr){
-	table.innerHTML = 'refreshing...'
-		HTMLstring = '';
-		for(let row in Arr){
-			HTMLstring += "<tr>";
-			for(let element in Arr[row]){
-				HTMLstring += "<td class='" + element + "' id='" + Arr[row]['id'] + element + "'>" + Arr[row][element]; + "</td>";
-			}
-			HTMLstring += "<td class='etc'>" + htmlOptionText(Arr[row]['id']) + '</td>';
-			HTMLstring += '</tr>';
-		}
-		table.innerHTML = HTMLstring;
-	}
-
-	function htmlOptionText(id){
-		let button_text = "<button type='button' id='"
-			+ 'b' + id
-			+ "'onclick='buttonClicked(this.id, this.innerHTML)'>"
-			+ "change"	//innerHTML
-			+ "</button>";
-		let checkbox_text = "<input type='checkbox' id='"
-			+ 'c' + id
-			+ "' onchange='checkboxChanged(this.id, this.checked)'>";
-		return button_text + checkbox_text;
-	}
-
-	function buttonClicked(id, state){
-		const button = document.getElementById(id);
-		id = id.slice(1);
-		if(state === "change"){
-			const input = new Input(id);
-			input.name.innerHTML = "<input id='i" + id + "name' value='" + input.name.innerHTML +"'>";
-			input.price.innerHTML = "<input id='i" + id + "price' value='" + input.price.innerHTML +"'>";
-			let selected = input.type.innerHTML;
-			input.type.innerHTML = "<select id='i" + id + "type'></select>";
-			typeSet("i" + id + "type", selected);
-			input.description.innerHTML = "<textarea rows='1' cols='50' id='i" + id + "description'>" + input.description.innerHTML + "</textarea>";
-			button.innerHTML = "update";
-		} else {
-			const input = new Input('i' + id);
-			if(!input.isFilled()){
-				console.warn("not filled");
-				return -1;
-			}
-		update_input(id, input);
-		}
-	}
-
-	function checkboxChanged(id, checked){
-		id = id.slice(1);
-		if(checked){
-			checklist.push(id);
-			checklist.sort((a, b) => a - b);
+function checkboxChanged(id, checked){
+	id = id.slice(1);
+	if(checked){
+		checklist.push(id);
+		checklist.sort((a, b) => a - b);
 		console.log(id + "'th element checked.\nchecklist=" + checklist);
 	} else {
 		checklist=checklist.filter(item => item !== id);

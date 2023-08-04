@@ -8,7 +8,7 @@ $username = $config['postgresql']['username'];
 $password = $config['postgresql']['password'];
 $dbname = $config['postgresql']['dbname'];
 
-if($_POST['type'] === 'info') {
+if($_POST['table'] === 'info') {
 	$tableName = $config['postgresql']['tableName'];
 } else {
 	$tableName = $config['postgresql']['tableName_type'];

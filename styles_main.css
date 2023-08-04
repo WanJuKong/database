@@ -1,0 +1,36 @@
+#sortList {
+	list-style-type:none;
+	margin:0;
+	padding:0;
+	overflow:hidden;
+	background-color:#223c6f;
+}
+
+#sortList li {
+	float:left;
+}
+
+#sortList li a {
+	font-size:20px;
+	display:block;
+	color:white;
+	text-align:center;
+	padding:10px 20px;
+	text-decoration:none;
+}
+
+#sortList li a:hover {
+	font-size:24px;
+	padding:8px 20px 7px 20px;
+	background-color:#00184b;
+}
+
+table ,tr,td{
+	border:solid 1px black;
+	border-collapse:collapse;
+}
+
+li {
+	list-style-type:none;
+	text-align: left;
+}
