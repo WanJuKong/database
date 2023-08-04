@@ -8,7 +8,7 @@ int main(void){
 	char copy[100];
 	snprintf(copy, sizeof(copy), "cp -r %s/* %s", copyFrom, copyTo);
 	int result = system(copy);
-	if(result)
+	if(result != 0)
 		printf("[ files copied successfully ]\n");
 	else
 		printf("[ ERROR : error code %d ]\n", result);
