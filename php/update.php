@@ -5,6 +5,7 @@ $name = pg_escape_string($_POST['name']);
 $price = pg_escape_string($_POST['price']);
 $type = pg_escape_string($_POST['type']);
 $description = pg_escape_string($_POST['description']);
+$img_src = pg_escape_string($_POST['img_src']);
 
 $config = parse_ini_file("/var/myapp/config.ini", true);
 
@@ -27,10 +28,12 @@ $sql = "UPDATE {$tableName} SET
 		name='{$name}', 
 		price='{$price}', 
 		type='{$type}', 
-		description='{$description}' 
+		description='{$description}',
+		img_src='{$img_src}',
+		reg_time=CURRENT_TIMESTAMP 
 	WHERE id={$id}";
 if(pg_query($conn, $sql)){
-	echo "updated succeddfully.";
+	echo "updated successfully.";
 } else {
 	echo "error:" . pg_last_error($conn);
 }

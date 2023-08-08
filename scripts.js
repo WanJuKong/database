@@ -1,5 +1,5 @@
 const table = document.getElementById('table');
-
+const allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 let typelist = ['p','r','d'];
 
 let checklist = [];
@@ -11,6 +11,17 @@ class Input {
 		this.price = document.getElementById(id + "price");
 		this.type = document.getElementById(id + "type");
 		this.description = document.getElementById(id + "description");
+		this.img_src = document.getElementById(id + "img_src");
+		try {
+			this.img_src.onchange = function(event) {
+				const file = event.target.files[0];
+				if(file && !allowedFileTypes.includes(file.type)){
+					console.warn("Invalid file type.\n allowed: "+ allowedFileTypes);
+					alert("Invalid file type.\n allowed: "+ allowedFileTypes);
+					event.target.value = '';
+				}
+			}
+		} catch (error){}
 	}
 	isFilled(){
 		if(this.name.value === ''
@@ -23,7 +34,9 @@ class Input {
 	clear(){
 		this.name.value = '';
 		this.price.value = '';
+		this.type.value = typelist[0];
 		this.description.value = '';
+		this.img_src.value = '';
 	}
 }
 /*
@@ -77,6 +90,7 @@ function submit_input() {
 	form.append('price', input.price.value);
 	form.append('type', input.type.value);
 	form.append('description', input.description.value);
+	form.append('img', input.img_src.files[0]);
 	input.clear();
 	xhr.open ('POST', url, true);
 	xhr.onreadystatechange = function(){
@@ -108,11 +122,12 @@ function get_all(table = 'info', callback){
 function refresh(){
 	typeListSet();
 	typeSet('type');
-	rearrange();
-	get_all('info', function(response){
-		let responseArr = JSON.parse(response);
-		displayTable(table, responseArr);
-		console.log('table refreshed.');
+	rearrange(function(){
+		get_all('info', function(response){
+			let responseArr = JSON.parse(response);
+			displayTable(table, responseArr);
+			console.log('table refreshed.');
+		});
 	});
 }
 function displayTable(table, Arr){
@@ -121,23 +136,16 @@ function displayTable(table, Arr){
 	for(let row in Arr){
 		HTMLstring += "<tr>";
 		for(let element in Arr[row]){
-			HTMLstring += "<td class='" + element + "' id='" + Arr[row]['id'] + element + "'>" + Arr[row][element]; + "</td>";
+			HTMLstring += `<td class='${element}' id='${Arr[row]['id'] + element}'>${Arr[row][element]}</td>`;
 		}
-		HTMLstring += "<td class='etc'>" + htmlOptionText(Arr[row]['id']) + '</td>';
-		HTMLstring += '</tr>';
+		HTMLstring += `<td class='etc'>${htmlOptionText(Arr[row]['id'])}</td></tr>`;
 	}
 	table.innerHTML = HTMLstring;
 }
 
 function htmlOptionText(id){
-	let button_text = "<button type='button' id='"
-		+ 'b' + id
-		+ "'onclick='buttonClicked(this.id, this.innerHTML)'>"
-		+ "change"	//innerHTML
-		+ "</button>";
-	let checkbox_text = "<input type='checkbox' id='"
-		+ 'c' + id
-		+ "' onchange='checkboxChanged(this.id, this.checked)'>";
+	let button_text = `<button type='button' id='b${id}' onclick='buttonClicked(this.id, this.innerHTML)'>change</button>`;
+	let checkbox_text = `<input type='checkbox' id='c${id}' onchange='checkboxChanged(this.id, this.checked)'>`;
 	return button_text + checkbox_text;
 }
 
@@ -145,13 +153,15 @@ function buttonClicked(id, state){
 	const button = document.getElementById(id);
 	id = id.slice(1);
 	if(state === "change"){
+		console.log("updating element: " + id)
 		const input = new Input(id);
-		input.name.innerHTML = "<input id='i" + id + "name' value='" + input.name.innerHTML +"'>";
-		input.price.innerHTML = "<input id='i" + id + "price' value='" + input.price.innerHTML +"'>";
+		input.name.innerHTML = `<input id='i${id}name' value='${input.name.innerHTML}'>`;
+		input.price.innerHTML = `<input id='i${id}price' value='${input.price.innerHTML}'>`;
 		let selected = input.type.innerHTML;
-		input.type.innerHTML = "<select id='i" + id + "type'></select>";
-		typeSet("i" + id + "type", selected);
-		input.description.innerHTML = "<textarea rows='1' cols='50' id='i" + id + "description'>" + input.description.innerHTML + "</textarea>";
+		input.type.innerHTML = `<select id='i${id}type'></select>`;
+		typeSet(`i${id}type`, selected);
+		input.description.innerHTML = `<textarea rows='1' cols='50' id='i${id}description'>${input.description.innerHTML}</textarea>`;
+		input.img_src.innerHTML = `<input type='file' id='i${id}name'>`;
 		button.innerHTML = "update";
 	} else {
 		const input = new Input('i' + id);
@@ -159,7 +169,7 @@ function buttonClicked(id, state){
 			console.warn("not filled");
 			return -1;
 		}
-	update_input(id, input);
+		update_input(id, input);
 	}
 }
 
@@ -168,10 +178,10 @@ function checkboxChanged(id, checked){
 	if(checked){
 		checklist.push(id);
 		checklist.sort((a, b) => a - b);
-		console.log(id + "'th element checked.\nchecklist=" + checklist);
+		console.log(id + `'th element checked.\nchecklist: [ ${checklist} ]`);
 	} else {
 		checklist=checklist.filter(item => item !== id);
-		console.log(id + "'th element unchecked.\nchecklist=" + checklist);
+		console.log(id + `'th element unchecked.\nchecklist: [" ${checklist} ]`);
 	}
 }
 
@@ -220,14 +230,15 @@ function deleteData(){
 	xhr.send(form);
 }
 
-function rearrange(){
+function rearrange(callback){
 	const xhr = new XMLHttpRequest();
 	const url = './php/rearrange.php';
-	xhr.open('POST', url, false);
+	xhr.open('POST', url, true);
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState ===4 && xhr.status === 200){
 			let response = xhr.responseText;
 			console.log(response);
+			callback();
 		}
 	}
 	xhr.send();

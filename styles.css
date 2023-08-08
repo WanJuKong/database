@@ -11,6 +11,7 @@ td {
         border:none 1px black;
         padding:3px 10px;
         text-align:center;
+	float:center;
 	width:5%
 }
 
@@ -19,18 +20,29 @@ td {
 }
 
 .id , .type {
-	width:10%;
+	width:7%;
 }
 
 .name , .price {
-	width:15%;
+	width:13%;
 }
 
 .description {
-	width:40%;
+	width:30%;
+}
+
+.img_src {
+	width:15%;
+}
+.reg_time {
+	width:10%;
+}
+.etc {
+	width:5%;
 }
 
 textarea {
+	width:100%;
 	text-align:center;
 }
 

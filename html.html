@@ -17,10 +17,12 @@
 				<th class='price'> price </th>
 				<th class='type'> type </th>
 				<th class='description'> description </th>
+				<th class='img_src'> img_src </th>
+				<th class='reg_time'> reg_time </th>
 				<th class='etc'></th>
 			</tr>
 			<tbody id='table'></tbody>
-			<tr><td colspan='6'> - </td></tr>
+			<tr><td colspan='8'> - </td></tr>
 			<tr>
 				<td class='id'> </td>
 				<td class='name'> <input type='text' id='name' autocomplete='off'> </td>
@@ -29,7 +31,10 @@
 					<select id='type'></select>
 				</td>
 				<td class='description'>
-					<textarea id='description' rows='1' cols='50' autocomplete='off'></textarea> </td>
+					<textarea id='description' rows='1' cols='50' autocomplete='off'></textarea>
+				</td>
+				<td class='img_src'> <input type='file' id='img_src' accept='.jpg, .jpeg, .png'> </td>
+				<td class='reg_time'> </td>
 				<td class='etc'>
 					<button type='button' onclick='submit_input();'>submit</button>
 					<button type='button' onclick='deleteData();'>delete</button>

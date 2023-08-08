@@ -4,7 +4,7 @@ const sortList = document.getElementById('sortList');
 
 const descriptions = [];
 
-const imgFile = "~/pictures/"
+const imgFilesLocation = "file://home/juwan/pictures/"
 
 function get(option, table, callback) {
 	const xhr = new XMLHttpRequest();
@@ -40,11 +40,7 @@ function getSortListText(Arr) {
 	for (let row in Arr) {
 		for (let element in Arr[row]) {
 			let data = Arr[row][element];
-			htmlText += "<li><a href='#"
-				+ data
-				+ "'>"
-				+ data
-				+ "</a></li>";
+			htmlText += "<li><a href='#${data}'>${data}</a></li>";
 		}
 	}
 	return htmlText;
@@ -88,9 +84,10 @@ function renderTable(Arr) {
 		let imgHTML = "";
 		let infoHTML = "";
 		const menuInfo = Arr[i];
-		imgHTML += "<td><img src='"
-			+ imgFile + (menuInfo['img_src'] === '' ? "imgNotFound.jpg" : menuInfo['img_src'])
-			+ "' alt='"
+/*		imgHTML += "<td><img src='"
+			+ imgFilesLocation + "imgNotFound.jpg"
+			//+ imgFilesLocation + (menuInfo['img_src'] === '' ? "imgNotFound.jpg" : menuInfo['img_src'])
+			+ "' width='200' height='200' alt='"
 			+ menuInfo['name']
 			+ "'></td>";
 		infoHTML += "<td><ul><li>"
@@ -98,8 +95,8 @@ function renderTable(Arr) {
 			+ menuInfo['price'] + "</li>\n";
 		if (menuInfo['description'] !== ''){
 			infoHTML += "<li><div id='desc" + menuInfo['id'] + "'></div>"
-			+ "<div class='descriptions' onclick=\"showDescriptions('"
-			+ menuInfo['id'] + "')\">description</div></li>";
+				+ "<div class='descriptions' onclick=\"showDescriptions('"
+				+ menuInfo['id'] + "')\">description</div></li>";
 			descriptions[menuInfo['id']] = menuInfo['description'];
 		}
 		infoHTML += "</ul></td>";
@@ -108,6 +105,21 @@ function renderTable(Arr) {
 		if ((i + 1) % ELEMENTSINROW === 0) {
 			htmlText += "</tr>\n<tr>";
 		}
+		*/
+		//=================================
+		imgHTML += `<td><img src='${imgFilesLocation}imgNotFound.jpg' width='200' height='200' alt='${menuInfo['name']}'></td>`;
+		infoHTML += `<td><ul><li>${menuInfo['name']}</li>\n<li>${menuInfo['price']}</li>\n`;
+		if (menuInfo['description'] !== '') {
+			infoHTML += `<li><div id='desc${menuInfo}['id']}'></div>\n<div class='descriptions' onclick=\'showDescriptions('${menuInfo['id']}')\'>description</div></li>`;
+			descriptions[menuInfo['id']] = menuInfo['description'];
+		}
+		infoHTML += "</ul></td>";
+		//주문버튼 추가
+		htmlText += imgHTML + infoHTML;
+		if ((i + 1) % ELEMENTSINROW === 0) {
+			htmlText += "</tr>\n<tr>";
+		}
+		//=================================
 	}
 	console.log(htmlText);
 	table.innerHTML = htmlText + "</tr>";
@@ -116,8 +128,10 @@ function renderTable(Arr) {
 function refresh() {
 	get('all','info', function(response) {
 		responseArr = JSON.parse(response);
+		console.log(responseArr);
 		renderTable(responseArr);
 	});
 }
 
 fillSortList();
+refresh();
