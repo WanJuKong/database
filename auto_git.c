@@ -5,7 +5,8 @@
 int main(void) {
 	time_t Time = time(NULL);
 	struct tm* t = localtime(&Time);
-	char commit[100];
+	char commitCmd[100];
+	char commitMsg[50];
 	if(system("git add *") == 0){
 		system("git status");
 		printf("\nare you sure you want to commit these?(y/n)");
@@ -18,8 +19,15 @@ int main(void) {
 	       printf("[ ERROR : error caused while adding ]\n");
 	       return 0;
 	}
-	snprintf(commit, sizeof(commit), "git commit -m '%02d/%02d(%02d:%02d)'", t->tm_mon+1, t->tm_mday, t->tm_hour, t->tm_min);
-	if(system(commit) != 0){
+	snprintf(commitMsg, sizeof(commitMsg),
+			"%02d/%02d(%02d:%02d)",
+			t->tm_mon + 1,
+			t->tm_mday,
+			t->tm_hour,
+			t->tm_min
+		);
+	snprintf(commitCmd, sizeof(commitCmd), "git commit -m '%s'", commitMsg);
+	if(system(commitCmd) != 0){
 		printf("[ ERROR : error caused while commiting ]\n");
 		return 0;
 	}
@@ -27,5 +35,5 @@ int main(void) {
 		printf("[ ERROR : error caused while commiting ]\n");
 		return 0;
 	}
-	printf("[ data pushed successfully ]\n");
+	printf("\n[ data pushed successfully ]\n commit message: '%s'\n", commitMsg);
 }
