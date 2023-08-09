@@ -1,28 +1,16 @@
 <?php
 
+include("DBConnection.php");
+
+$conn = $db['conn'];
+$tableName = $_POST['table'] === 'type' ? $db['type'] : $db['info'];
+
 $id = pg_escape_string($_POST['id']);
 $name = pg_escape_string($_POST['name']);
 $price = pg_escape_string($_POST['price']);
 $type = pg_escape_string($_POST['type']);
 $description = pg_escape_string($_POST['description']);
 $img_src = pg_escape_string($_POST['img_src']);
-
-$config = parse_ini_file("/var/myapp/config.ini", true);
-
-$servername ='localhost';
-$port = $config['postgresql']['port'];
-$username = $config['postgresql']['username'];
-$password = $config['postgresql']['password'];
-$dbname = $config['postgresql']['dbname'];
-
-$tableName = $config['postgresql']['tableName'];
-
-$connection_string = (string)"host={$servername} port={$port} dbname={$dbname} user={$username} password={$password}";
-
-$conn = pg_connect($connection_string);
-if(!$conn){
-        die('Connection failed: ' . pg_last_error());
-}
 
 $sql = "UPDATE {$tableName} SET 
 		name='{$name}', 

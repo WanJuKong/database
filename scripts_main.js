@@ -40,7 +40,7 @@ function getSortListText(Arr) {
 	for (let row in Arr) {
 		for (let element in Arr[row]) {
 			let data = Arr[row][element];
-			htmlText += "<li><a href='#${data}'>${data}</a></li>";
+			htmlText +='<li><a href='#${data}'>${data}</a></li>';
 		}
 	}
 	return htmlText;
