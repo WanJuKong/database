@@ -109,7 +109,8 @@ function renderTable(Arr) {
 		}
 		*/
 		//=================================
-		imgHTML += `<td><img src='data:image;base64,${menuInfo['img_src']}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
+		imgHTML += `<td><img src='/php/get_image.php?image_src=${menuInfo['img_src']}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
+		//imgHTML += `<td><img src='data:image;base64,${menuInfo['img_src']}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
 		infoHTML += `<td><ul><li>${menuInfo['name']}</li>\n<li>${menuInfo['price']}</li>\n`;
 		if (menuInfo['description'] !== '') {
 			infoHTML += `<li><div id='desc${menuInfo}['id']}'></div>\n<div class='descriptions' onclick=\'showDescriptions('${menuInfo['id']}')\'>description</div></li>`;
