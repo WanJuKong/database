@@ -27,7 +27,7 @@ function get(option, table, callback) {
 
 
 function fillSortList() {
-	get('all', 'sort', function(response) {
+	get('all', 'type', function(response) {
 		let responseArr = JSON.parse(response);
 		console.log(responseArr);
 		sortList.innerHTML = getSortListText(responseArr);
@@ -40,7 +40,7 @@ function getSortListText(Arr) {
 	for (let row in Arr) {
 		for (let element in Arr[row]) {
 			let data = Arr[row][element];
-			htmlText +='<li><a href='#${data}'>${data}</a></li>';
+			htmlText += `<li><a href='#${data}'>${data}</a></li>`;
 		}
 	}
 	return htmlText;

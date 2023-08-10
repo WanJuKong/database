@@ -86,6 +86,7 @@ function submit_input() {
 	const xhr = new XMLHttpRequest();
 	const url = './php/submit.php';
 	const form = new FormData();
+	form.append('table', 'info');
 	form.append('name', input.name.value);
 	form.append('price', input.price.value);
 	form.append('type', input.type.value);
