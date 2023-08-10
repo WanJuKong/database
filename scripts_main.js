@@ -4,9 +4,9 @@ const sortList = document.getElementById('sortList');
 
 const descriptions = [];
 
-const imgFilesLocation = "file://home/juwan/pictures/"
+//const imgFilesLocation = "file://home/juwan/pictures/"
 
-function get(option, table, callback) {
+function get(option, table, callback, img_get = false) {
 	const xhr = new XMLHttpRequest();
 	const form = new FormData();
 	let url = "./php/get_all.php";
@@ -14,6 +14,7 @@ function get(option, table, callback) {
 		url = "./php/get_some.php";
 		form.append('option', option);
 	}
+	form.append('img_get', img_get);
 	form.append('table', table);
 	xhr.open('POST', url, true);
 	xhr.onreadystatechange = function() {
@@ -29,7 +30,7 @@ function get(option, table, callback) {
 function fillSortList() {
 	get('all', 'type', function(response) {
 		let responseArr = JSON.parse(response);
-		console.log(responseArr);
+		console.log(responseArr);  // 디버깅 ========================
 		sortList.innerHTML = getSortListText(responseArr);
 	});
 }
@@ -45,7 +46,7 @@ function getSortListText(Arr) {
 	}
 	return htmlText;
 }
-
+/*
 const exampleArr = {
 	0 : {
 		id : '1',
@@ -75,7 +76,7 @@ const exampleArr = {
 		regtime : ''
 	}
 };
-
+*/    //디버깅  ===================================
 function renderTable(Arr) {
 	const length = Object.keys(Arr).length;
 	const table = document.getElementById('table');
@@ -84,6 +85,7 @@ function renderTable(Arr) {
 		let imgHTML = "";
 		let infoHTML = "";
 		const menuInfo = Arr[i];
+
 /*		imgHTML += "<td><img src='"
 			+ imgFilesLocation + "imgNotFound.jpg"
 			//+ imgFilesLocation + (menuInfo['img_src'] === '' ? "imgNotFound.jpg" : menuInfo['img_src'])
@@ -107,7 +109,7 @@ function renderTable(Arr) {
 		}
 		*/
 		//=================================
-		imgHTML += `<td><img src='${imgFilesLocation}imgNotFound.jpg' width='200' height='200' alt='${menuInfo['name']}'></td>`;
+		imgHTML += `<td><img src='data:image;base64,${menuInfo['img_src']}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
 		infoHTML += `<td><ul><li>${menuInfo['name']}</li>\n<li>${menuInfo['price']}</li>\n`;
 		if (menuInfo['description'] !== '') {
 			infoHTML += `<li><div id='desc${menuInfo}['id']}'></div>\n<div class='descriptions' onclick=\'showDescriptions('${menuInfo['id']}')\'>description</div></li>`;
@@ -128,9 +130,9 @@ function renderTable(Arr) {
 function refresh() {
 	get('all','info', function(response) {
 		responseArr = JSON.parse(response);
-		console.log(responseArr);
+		console.log(responseArr);   // 디버깅 ==========================
 		renderTable(responseArr);
-	});
+	}, true);
 }
 
 fillSortList();

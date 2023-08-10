@@ -24,4 +24,3 @@ if (pg_query($conn, 'VACUUM')){
 pg_close($conn);
 
 ?>
-

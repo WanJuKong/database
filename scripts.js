@@ -63,7 +63,14 @@ const input = {
 */
 
 function typeListSet(){
-	return 0;
+	get_all('type', function(response) {
+		let responseArr = JSON.parse(response);
+		typelist = [];
+		for(let row of responseArr) {
+			typelist.push(row['type']);
+			typeSet('type');
+		}
+	});
 }
 
 function typeSet(id, selected = undefined){
@@ -122,7 +129,6 @@ function get_all(table = 'info', callback){
 
 function refresh(){
 	typeListSet();
-	typeSet('type');
 	rearrange(function(){
 		get_all('info', function(response){
 			let responseArr = JSON.parse(response);
