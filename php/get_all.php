@@ -15,7 +15,7 @@ if(pg_num_rows($DBData) > 0){
 		$counts++;
 	}
 }
-
+/*
 if($_POST['img_get']) {
 	for($i = 0; $i < $counts; $i++){
 		$imgsrc = $returnArray[$i]['img_src'];
@@ -24,7 +24,7 @@ if($_POST['img_get']) {
 		$returnArray[$i]['img_src'] = $imgData;
 	}
 }
-
+ */
 /*
 if(isset($_POST['get_img']) && $_POST['get_img'] === true ){
 	$sql = "SELECT id, img_src FROM {$tableName}";

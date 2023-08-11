@@ -168,7 +168,7 @@ function buttonClicked(id, state){
 		input.type.innerHTML = `<select id='i${id}type'></select>`;
 		typeSet(`i${id}type`, selected);
 		input.description.innerHTML = `<textarea rows='1' cols='50' id='i${id}description'>${input.description.innerHTML}</textarea>`;
-		input.img_src.innerHTML = `<input type='file' id='i${id}name'>`;
+		input.img_src.innerHTML = `<input type='file' id='i${id}img_src'>`;
 		button.innerHTML = "update";
 	} else {
 		const input = new Input('i' + id);
@@ -201,6 +201,7 @@ function update_input(id, input){
 	form.append('price', input.price.value);
 	form.append('type', input.type.value);
 	form.append('description', input.description.value);
+	form.append('img', input.img_src.files[0]);
 	xhr.open('POST', url, true);
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState === 4 && xhr.status === 200){

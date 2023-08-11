@@ -4,9 +4,9 @@ const sortList = document.getElementById('sortList');
 
 const descriptions = [];
 
-//const imgFilesLocation = "file://home/juwan/pictures/"
+//const imgFilesLocation = ""
 
-function get(option, table, callback, img_get = false) {
+function get(option, table, callback/*, img_get = false*/) {
 	const xhr = new XMLHttpRequest();
 	const form = new FormData();
 	let url = "./php/get_all.php";
@@ -14,7 +14,7 @@ function get(option, table, callback, img_get = false) {
 		url = "./php/get_some.php";
 		form.append('option', option);
 	}
-	form.append('img_get', img_get);
+//	form.append('img_get', img_get); ===============================
 	form.append('table', table);
 	xhr.open('POST', url, true);
 	xhr.onreadystatechange = function() {
@@ -109,11 +109,12 @@ function renderTable(Arr) {
 		}
 		*/
 		//=================================
-		imgHTML += `<td><img src='/php/get_image.php?image_src=${menuInfo['img_src']}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
+		let imgSorce = menuInfo['img_src'];
+		imgHTML += `<td><img src='./php/get_image.php?img_src=${imgSorce}&extension=${imgSorce.slice(imgSorce.lastIndexOf('.')+1)}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
 		//imgHTML += `<td><img src='data:image;base64,${menuInfo['img_src']}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
 		infoHTML += `<td><ul><li>${menuInfo['name']}</li>\n<li>${menuInfo['price']}</li>\n`;
 		if (menuInfo['description'] !== '') {
-			infoHTML += `<li><div id='desc${menuInfo}['id']}'></div>\n<div class='descriptions' onclick=\'showDescriptions('${menuInfo['id']}')\'>description</div></li>`;
+			infoHTML += `<li><div id='desc${menuInfo['id']}' class='descriptions' onclick="showDescriptions('${menuInfo['id']}')">description</div></li>`;
 			descriptions[menuInfo['id']] = menuInfo['description'];
 		}
 		infoHTML += "</ul></td>";
@@ -128,13 +129,28 @@ function renderTable(Arr) {
 	table.innerHTML = htmlText + "</tr>";
 }
 
+function showDescriptions(id){
+	let desc = document.getElementById('desc' + id);
+	if (desc.innerHTML === 'description'){
+		desc.innerHTML = descriptions[id];
+	} else {
+		desc.innerHTML = 'description';
+	}
+}
+
 function refresh() {
 	get('all','info', function(response) {
 		responseArr = JSON.parse(response);
 		console.log(responseArr);   // 디버깅 ==========================
 		renderTable(responseArr);
-	}, true);
+	}/*, true*/);
 }
 
 fillSortList();
 refresh();
+
+
+/*
+<a> -> onclick refresh (sort);
+
+*/

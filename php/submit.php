@@ -4,6 +4,7 @@
 //ini_set('display_errors', 1);
 
 include("DBConnection.php");
+include("imgManage.php");
 
 $conn = $db['conn'];
 $tableName = $_POST['table'] === 'type' ? $db['type'] : $db['info'];
@@ -14,6 +15,13 @@ $price = (int)$_POST['price'];
 $type = pg_escape_string($_POST['type']);
 $description = pg_escape_string($_POST['description']);
 
+$img_src = '';
+
+if (isset($_FILES['img'])) {
+	$img_src = imgUpload($_FILES['img']);
+}
+
+/*
 $img_src = '';
 
 if (isset($_FILES['img'])) {
@@ -33,7 +41,7 @@ if (isset($_FILES['img'])) {
 		}
 	}
 }
-
+*/
 $sql = "INSERT INTO {$tableName} (name, price, type, description, img_src)
 	VALUES($1, $2, $3, $4, $5)";
 $params = array($name, $price, $type, $description, $img_src);
