@@ -25,12 +25,40 @@
 	background-color:#00184b;
 }
 
-table ,tr,td{
+table ,tr,td {
 	border:solid 1px black;
 	border-collapse:collapse;
+}
+
+table tr td:nth-child(even){
+	width:400px;
+	max-height:200px;
+	overflow-y:auto;
+}
+
+td{
+	height:200px;
+	padding:0;
 }
 
 li {
 	list-style-type:none;
 	text-align: left;
+}
+
+.name {
+	font-weight:bold;
+	font-size:20px;
+}
+
+.description {
+	font-style:italic;
+}
+
+td ul li {
+	padding-right:20px;
+}
+
+iframe {
+	float:left;
 }

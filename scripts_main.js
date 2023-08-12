@@ -112,9 +112,9 @@ function renderTable(Arr) {
 		let imgSorce = menuInfo['img_src'];
 		imgHTML += `<td><img src='./php/get_image.php?img_src=${imgSorce}&extension=${imgSorce.slice(imgSorce.lastIndexOf('.')+1)}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
 		//imgHTML += `<td><img src='data:image;base64,${menuInfo['img_src']}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
-		infoHTML += `<td><ul><li>${menuInfo['name']}</li>\n<li>${menuInfo['price']}</li>\n`;
+		infoHTML += `<td><ul><li class='name'>${menuInfo['name']}</li>\n<li class='price'>${menuInfo['price']}</li>\n`;
 		if (menuInfo['description'] !== '') {
-			infoHTML += `<li><div id='desc${menuInfo['id']}' class='descriptions' onclick="showDescriptions('${menuInfo['id']}')">description</div></li>`;
+			infoHTML += `<li>[ <a id='desc${menuInfo['id']}' class='description' onclick="showDescriptions('${menuInfo['id']}')">description</a> ]</li>`;
 			descriptions[menuInfo['id']] = menuInfo['description'];
 		}
 		infoHTML += "</ul></td>";
