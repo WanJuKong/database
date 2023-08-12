@@ -1,9 +1,31 @@
+const leastAccuracy = 0.75;
+const fix = 10;	
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'en-Us';
+recognition.interimResults = false;
+recognition.maxAlternatives = 1;
+
 
 recognition.onresult = function(event) {
 	const transcript = event.results[0][0].transcript;
-	console.log('recognition: '+transcript);
+	const confidence = parseFloat(event.results[0][0].confidence);
+	if (confidence < leastAccuracy) {
+		console.warn('Error: unrecognizable');
+		return -1;
+	}
+	console.log(`Result: ${transcript} / ${confidence.toFixed(fix) * 100}%`);
 	document.getElementById('recogResult').innerHTML += transcript + '<br>';
+/*
+	for(let i = 0; i < event.results.length; i++) {
+		for(let j = 0; j < event.results[i].length; j++) {
+			let transcript = event.results[i][j].transcript;
+			let confidence = parseFloat(event.results[i][j].confidence);
+			console.log(`Result: ${transcript} / [${i}][${j}]${confidence.toFixed(fix) * 100}%`);
+			document.getElementById('recogResult').innerHTML += transcript + '<br>';
+		}
+	}
+	document.getElementById('recogResult').innerHTML += '<br>';
+*/
 };
 
 function recogStart(){

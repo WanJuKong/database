@@ -20,8 +20,8 @@
 }
 
 #sortList li a:hover {
-	font-size:24px;
-	padding:8px 20px 7px 20px;
+/*	font-size:24px;
+	padding:8px 20px 7px 20px;*/
 	background-color:#00184b;
 }
 
@@ -62,3 +62,5 @@ td ul li {
 iframe {
 	float:left;
 }
+
+
