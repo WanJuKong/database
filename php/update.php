@@ -33,6 +33,6 @@ if(pg_query($conn, $sql)){
 	echo "error:" . pg_last_error($conn);
 }
 
-pg_close($conn);
+//pg_close($conn);
 
 ?>

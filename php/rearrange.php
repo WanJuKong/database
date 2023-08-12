@@ -24,6 +24,6 @@ if($result){
 	echo 'Error: '.pg_last_error();
 }
 
-pg_close($conn);
+//pg_close($conn);
 
 ?>
