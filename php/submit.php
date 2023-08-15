@@ -11,7 +11,7 @@ $tableName = $_POST['table'] === 'type' ? $db['type'] : $db['info'];
 
 
 $name = pg_escape_string($_POST['name']);
-$price = (int)$_POST['price'];
+$price = $_POST['price'];
 $type = pg_escape_string($_POST['type']);
 $description = pg_escape_string($_POST['description']);
 

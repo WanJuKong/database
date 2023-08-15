@@ -30,37 +30,44 @@ table ,tr,td {
 	border-collapse:collapse;
 }
 
-table tr td:nth-child(even){
-	width:400px;
-	max-height:200px;
-	overflow-y:auto;
-}
-
 td{
-	height:200px;
 	padding:0;
 }
 
 li {
 	list-style-type:none;
-	text-align: left;
+	text-align:left;
 }
 
 .name {
 	font-weight:bold;
-	font-size:20px;
+	font-size:24px;
+}
+
+.price {
+	font-size:15px;
+}
+
+.type {
+	font-size:12px;
 }
 
 .description {
 	font-style:italic;
+	font-size:15px;
 }
 
+td ul{
+	padding:0px 10px;
+}
 td ul li {
-	padding-right:20px;
+	text-align:center;
 }
 
 iframe {
 	float:left;
 }
 
-
+button:hover {
+	cursor:pointer;
+}

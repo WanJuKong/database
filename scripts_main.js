@@ -1,10 +1,29 @@
-const ELEMENTSINROW = 3;
+const ELEMENTSINROW = 4;
+
+const currency_type = '&#8361;' //(원: &#8361;) (달러: &#x0024;)
 
 const sortList = document.getElementById('sortList');
 
 const descriptions = [];
 
 //const imgFilesLocation = ""
+
+const Order = {
+	orders : [],
+
+	totalPrice : 0,
+
+	totalOrder : 0,
+
+	menuInfo :[],
+
+	add : function(id) {
+
+	},
+
+	remove : function(id) {
+	},
+};
 
 function get(option, table, callback/*, img_get = false*/) {
 	const xhr = new XMLHttpRequest();
@@ -86,6 +105,7 @@ function renderTable(Arr) {
 		let infoHTML = "";
 		const menuInfo = Arr[i];
 
+		// 테이블 ver 1
 /*		imgHTML += "<td><img src='"
 			+ imgFilesLocation + "imgNotFound.jpg"
 			//+ imgFilesLocation + (menuInfo['img_src'] === '' ? "imgNotFound.jpg" : menuInfo['img_src'])
@@ -109,6 +129,10 @@ function renderTable(Arr) {
 		}
 		*/
 		//=================================
+
+
+		//테이블 ver 2
+/*
 		let imgSorce = menuInfo['img_src'];
 		imgHTML += `<td><img src='./php/get_image.php?img_src=${imgSorce}&extension=${imgSorce.slice(imgSorce.lastIndexOf('.')+1)}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
 		//imgHTML += `<td><img src='data:image;base64,${menuInfo['img_src']}' width='200' height='200' alt='${menuInfo['name']}'></td>`;
@@ -122,13 +146,27 @@ function renderTable(Arr) {
 		htmlText += imgHTML + infoHTML;
 		if ((i + 1) % ELEMENTSINROW === 0) {
 			htmlText += "</tr>\n<tr>";
-		}
+		}*/
 		//=================================
+
+
+		//테이블 ver 3
+		let imgSorce = menuInfo['img_src'];
+		imgHTML += `<td class='container'><button onclick='addOrder("${menuInfo.id}")'><img src='./php/get_image.php?img_src=${imgSorce}&extension=${imgSorce.slice(imgSorce.lastIndexOf('.')+1)}' width='300' height='300' alt='${menuInfo.name}'></button>`;
+		infoHTML += `<div class='overlay'><ul class='info-text'><li><span class='name'>${menuInfo.name}</span>\n<sub class='price'> ${currency_type}${menuInfo.price}</sub></li><hr>\n<li class='description'>${menuInfo.description}</li></ul></div></td>`;
+		htmlText += imgHTML + infoHTML;
+		if ((i + 1) % ELEMENTSINROW === 0) {
+			htmlText += "</tr>\n<tr>";
+		}
 	}
 	console.log(htmlText);
 	table.innerHTML = htmlText + "</tr>";
 }
 
+function addOrder(id){};
+
+
+/*
 function showDescriptions(id){
 	let desc = document.getElementById('desc' + id);
 	if (desc.innerHTML === 'description'){
@@ -137,10 +175,12 @@ function showDescriptions(id){
 		desc.innerHTML = 'description';
 	}
 }
+*/
 
 function refresh() {
 	get('all','info', function(response) {
 		responseArr = JSON.parse(response);
+		Order.menuInfo = responseArr;
 		console.log(responseArr);   // 디버깅 ==========================
 		renderTable(responseArr);
 	}/*, true*/);
