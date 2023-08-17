@@ -18,3 +18,17 @@
 	color:white;
 }
 
+.img_container {
+	height:300px;
+	width:300px;
+	overflow:hidden;
+
+}
+
+img {
+	transition:transform 0.3s;
+}
+
+img:hover {
+	transform:scale(1.2);
+}

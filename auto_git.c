@@ -7,7 +7,7 @@ int main(void) {
 	struct tm* t = localtime(&Time);
 	char commitCmd[100];
 	char commitMsg[50];
-	if(system("git add *") == 0){
+	if(system("git add .") == 0){
 		system("git status");
 		printf("\nare you sure you want to commit these?(y/n)");
 		fflush(stdin);

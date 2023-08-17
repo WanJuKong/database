@@ -6,6 +6,11 @@ $conn = $db['conn'];
 $tableName = $_POST['table'] === 'type' ? $db['type'] : $db['info'];
 
 $sql = "SELECT * FROM {$tableName}";
+
+if(isset($_POST['option'])) {
+	$sql .= " WHERE type = '{$_POST['option']}'";
+}
+
 $DBData = pg_query($conn, $sql);
 $returnArray = array();
 $counts = 0;

@@ -6,8 +6,6 @@ const sortList = document.getElementById('sortList');
 
 const descriptions = [];
 
-const table = document.getElementById('table');
-
 let sortListArr;
 
 //const imgFilesLocation = ""
@@ -19,7 +17,10 @@ const Order = {
 
 	totalOrder : 0,
 
+	menuInfo :[],
+
 	add : function(id) {
+
 	},
 
 	remove : function(id) {
@@ -29,8 +30,9 @@ const Order = {
 function get(option, table, callback/*, img_get = false*/) {
 	const xhr = new XMLHttpRequest();
 	const form = new FormData();
-	const url = "./php/get_all.php";
+	let url = "./php/get_all.php";
 	if (option !== 'all') {
+		url = "./php/get_some.php";
 		form.append('option', option);
 	}
 //	form.append('img_get', img_get); ===============================
@@ -50,7 +52,6 @@ function fillSortList() {
 	get('all', 'type', function(response) {
 		sortListArr = JSON.parse(response);
 		console.log(sortListArr);  // 디버깅 ========================
-		refresh();
 		sortList.innerHTML = getSortListText(sortListArr);
 	});
 }
@@ -97,9 +98,10 @@ const exampleArr = {
 	}
 };
 */    //디버깅  ===================================
-function renderTable(Arr, type) {
+function renderTable(Arr) {
 	const length = Object.keys(Arr).length;
-	let htmlText = `<tr id='${type}'><td class='sort_br' colspan='${ELEMENTSINROW}'>${type}</td></tr><tr>`
+	const table = document.getElementById('table');
+	let htmlText = "<tr>"
 	for(let i = 0; i < length; i++) {
 		let imgHTML = "";
 		let infoHTML = "";
@@ -152,7 +154,7 @@ function renderTable(Arr, type) {
 
 		//테이블 ver 3
 		let imgSorce = menuInfo['img_src'];
-		imgHTML += `<td class='container'><button onclick='addOrder("${menuInfo.id}","${menuInfo.name}","${menuInfo.price}")'><div class='img_container'><img src='./php/get_image.php?img_src=${imgSorce}&extension=${imgSorce.slice(imgSorce.lastIndexOf('.')+1)}' width='300' height='300' alt='${menuInfo.name}'></div></button>`;
+		imgHTML += `<td class='container'><button onclick='addOrder("${menuInfo.id}")'><img src='./php/get_image.php?img_src=${imgSorce}&extension=${imgSorce.slice(imgSorce.lastIndexOf('.')+1)}' width='300' height='300' alt='${menuInfo.name}'></button>`;
 		infoHTML += `<div class='overlay'><ul class='info-text'><li><span class='name'>${menuInfo.name}</span>\n<sub class='price'> ${currency_type}${menuInfo.price}</sub></li><hr>\n<li class='description'>${menuInfo.description}</li></ul></div></td>`;
 		htmlText += imgHTML + infoHTML;
 		if ((i + 1) % ELEMENTSINROW === 0) {
@@ -160,19 +162,10 @@ function renderTable(Arr, type) {
 		}
 	}
 	console.log(htmlText);
-	table.innerHTML += htmlText + "</tr>";
+	table.innerHTML = htmlText + "</tr>";
 }
 
-function addOrder(id, name, price){
-	Order.isin();
-	Order.orders[id] = {name, price, count}
-	Order.totalOrder += 1;
-	Order.totalPrice += price2int(price);
-	Order.displayOrders();
-}
-
-function price2int(string){
-}
+function addOrder(id){};
 
 
 /*
@@ -187,20 +180,16 @@ function showDescriptions(id){
 */
 
 function refresh() {
-	table.innerHTML = '';
-	for(let index in sortListArr){
-		let type = sortListArr[index]['type'];
-		get(type,'info', function(response) {
-			responseArr = JSON.parse(response);
-			Order.menuInfo = responseArr;
-			console.log(responseArr);   // 디버깅 ==========================
-			renderTable(responseArr, type);
-		}/*, true*/);
-	}
+	get('all','info', function(response) {
+		responseArr = JSON.parse(response);
+		Order.menuInfo = responseArr;
+		console.log(responseArr);   // 디버깅 ==========================
+		renderTable(responseArr);
+	}/*, true*/);
 }
 
 fillSortList();
-
+refresh();
 
 
 /*
