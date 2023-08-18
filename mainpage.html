@@ -23,9 +23,15 @@
 					</table>
 				</div>
 				<div id='order-list'>
-					<div class='fill'>
-						<ul id='orders'></ul>
-					</div>
+					<table>
+						<tr width='100%'>
+							<th>menu</th>
+							<th>price</th>
+							<th>count</th>
+							<th></th>
+						</tr>
+						<tbody id='orders'></tbody>
+					</table>
 				</div>
 			</div>
 			<div id='chat'>
@@ -36,6 +42,10 @@
 		<footer>
 			Copyright 2023 juwan All rights reserved.
 		</footer>
+		<div id='submit-area'>
+			<div id='totalPrice'></div>
+			<button id='submit-button' onclick=''>Submit</button>
+		</div>
 		<script src="scripts_main.js"></script>
 	</body>
 </html>

@@ -2,31 +2,69 @@ const ELEMENTSINROW = 3;
 
 const currency_type = '&#8361;' //(원: &#8361;) (달러: &#x0024;)
 
-const sortList = document.getElementById('sortList');
-
 const descriptions = [];
 
-const table = document.getElementById('table');
+const Dom = {
+	sortList : document.getElementById('sortList'),
+
+	table : document.getElementById('table'),
+
+	totalPrice : document.getElementById('totalPrice'),
+
+	orders : document.getElementById('orders')
+};
 
 let sortListArr;
 
 //const imgFilesLocation = ""
 
 const Order = {
-	orders : [],
+	orders : {},
 
 	totalPrice : 0,
 
 	totalOrder : 0,
 
-	add : function(id) {
+	isin : function(id) {
+		if(this.orders[id]) {
+			return true;
+		}
+		return false;
 	},
 
-	remove : function(id) {
+	setTotalPrice : function() {
+		this.totalPrice = 0;
+		console.log(this.orders);
+		for(let id in this.orders) {
+			let order = this.orders[id];
+			this.totalPrice += (order.price) * (order.number);
+		}
+		Dom.totalPrice.innerHTML = currency_type + this.totalPrice;
 	},
+
+	displayOrders : function(){
+		let htmlText = '';
+		for(let id in this.orders) {
+			let order = this.orders[id]
+			htmlText += `<tr><td>${order.name}</td><td>${order.price}</td><td><input class='inRow' type='number' min='1' max='10' step='1' value='${order.number}' onchange=Order.numberChanged(${id},this.value)></td><td><button onclick='Order.cancel(${id})'>Delete</button></td></tr>`;
+		}
+		Dom.orders.innerHTML = htmlText;
+	},
+
+	numberChanged : function(id, value) {
+		this.totalOrder += (value - this.orders[id].number);
+		this.orders[id].number = value;
+		this.setTotalPrice();
+	},
+
+	cancel : function(id) {
+		delete this.orders[id];
+		this.displayOrders()
+		this.setTotalPrice();
+	}
 };
 
-function get(option, table, callback/*, img_get = false*/) {
+function get(option, table, callback/*, img_get = false*/, asynchronous = true) {
 	const xhr = new XMLHttpRequest();
 	const form = new FormData();
 	const url = "./php/get_all.php";
@@ -35,7 +73,7 @@ function get(option, table, callback/*, img_get = false*/) {
 	}
 //	form.append('img_get', img_get); ===============================
 	form.append('table', table);
-	xhr.open('POST', url, true);
+	xhr.open('POST', url, asynchronous);
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState ===4 && xhr.status === 200) {
 			let response = xhr.responseText;
@@ -51,7 +89,7 @@ function fillSortList() {
 		sortListArr = JSON.parse(response);
 		console.log(sortListArr);  // 디버깅 ========================
 		refresh();
-		sortList.innerHTML = getSortListText(sortListArr);
+		Dom.sortList.innerHTML = getSortListText(sortListArr);
 	});
 }
 
@@ -160,18 +198,21 @@ function renderTable(Arr, type) {
 		}
 	}
 	console.log(htmlText);
-	table.innerHTML += htmlText + "</tr>";
+	Dom.table.innerHTML += htmlText + "</tr>";
 }
 
 function addOrder(id, name, price){
-	Order.isin();
-	Order.orders[id] = {name, price, count}
-	Order.totalOrder += 1;
-	Order.totalPrice += price2int(price);
+	if(Order.isin(id)) {
+		Order.orders[id]['number'] ++;
+		console.log('t');
+	}
+	else {
+		Order.orders[id] = { 'name' : name, 'price' : extractNumbers(price), 'number' : 1 };
+		console.log(Order.orders[id]);
+	}
+	Order.totalOrder ++;
+	Order.setTotalPrice();
 	Order.displayOrders();
-}
-
-function price2int(string){
 }
 
 
@@ -186,16 +227,19 @@ function showDescriptions(id){
 }
 */
 
+function extractNumbers(str) {
+	return Number(str.replace(/\D/g, ''));
+}
+
 function refresh() {
-	table.innerHTML = '';
+	Dom.table.innerHTML = '';
 	for(let index in sortListArr){
 		let type = sortListArr[index]['type'];
 		get(type,'info', function(response) {
 			responseArr = JSON.parse(response);
-			Order.menuInfo = responseArr;
 			console.log(responseArr);   // 디버깅 ==========================
 			renderTable(responseArr, type);
-		}/*, true*/);
+		}/*, true*/, false);
 	}
 }
 

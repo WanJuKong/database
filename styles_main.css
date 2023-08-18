@@ -149,10 +149,48 @@ footer {
 
 #order-list {
 	flex:3;
-	display:flex;
 	overflow-y:scroll;
 }
 
 .fill {
 	flex:1;
+}
+
+
+
+
+
+#submit-area {
+	display:flex;
+	flex-direction:column;
+}
+
+#totalPrice {
+	flex:1;
+	text-align:center;
+}
+
+#submit-button {
+	flex:5;
+}
+
+#order-list table, tr, td {
+	text-align:center;
+	background-color:white;
+}
+
+#order-list td:nth-child(1) {
+	width:50%;
+}
+
+#order-list td:nth-child(2) {
+	width:30%;
+}
+
+#order-list td:nth-child(3) {
+	width:10%;
+}
+
+#order-list td:nth-child(4) {
+	width:10%;
 }

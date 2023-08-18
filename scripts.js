@@ -116,7 +116,7 @@ function get_all(table = 'info', callback){
 	const url = './php/get_all.php';
 	const form = new FormData();
 	form.append('table', table);
-	xhr.open('POST', url, true);
+	xhr.open('POST', url, false);
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState === 4 && xhr.status === 200){
 			checklist=[];
