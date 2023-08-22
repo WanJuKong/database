@@ -1,43 +1,79 @@
-const ELEMENTSINROW = 3;
+const ELEMENTSINROW = 3;  //
 
 const currency_type = '&#8361;' //(원: &#8361;) (달러: &#x0024;)
 
-const sortList = document.getElementById('sortList');
-
 const descriptions = [];
+
+const Dom = {
+	sortList : document.getElementById('sortList'),
+
+	table : document.getElementById('table'),
+
+	totalPrice : document.getElementById('totalPrice'),
+
+	orders : document.getElementById('orders')
+};
 
 let sortListArr;
 
 //const imgFilesLocation = ""
 
 const Order = {
-	orders : [],
+	orders : {},
 
 	totalPrice : 0,
 
 	totalOrder : 0,
 
-	menuInfo :[],
-
-	add : function(id) {
-
+	isin : function(id) {
+		if(this.orders[id]) {
+			return true;
+		}
+		return false;
 	},
 
-	remove : function(id) {
+	setTotalPrice : function() {
+		this.totalPrice = 0;
+		console.log(this.orders);
+		for(let id in this.orders) {
+			let order = this.orders[id];
+			this.totalPrice += (order.price) * (order.number);
+		}
+		Dom.totalPrice.innerHTML = currency_type + this.totalPrice;
 	},
+
+	displayOrders : function(){
+		let htmlText = '';
+		for(let id in this.orders) {
+			let order = this.orders[id]
+			htmlText += `<tr><td>${order.name}</td><td>${order.price}</td><td><input class='inRow' type='number' min='1' max='10' step='1' value='${order.number}' onchange=Order.numberChanged(${id},this.value)></td><td><button onclick='Order.cancel(${id})'>Delete</button></td></tr>`;
+		}
+		Dom.orders.innerHTML = htmlText;
+	},
+
+	numberChanged : function(id, value) {
+		this.totalOrder += (value - this.orders[id].number);
+		this.orders[id].number = value;
+		this.setTotalPrice();
+	},
+
+	cancel : function(id) {
+		delete this.orders[id];
+		this.displayOrders()
+		this.setTotalPrice();
+	}
 };
 
-function get(option, table, callback/*, img_get = false*/) {
+function get(option, table, callback/*, img_get = false*/, asynchronous = true) {
 	const xhr = new XMLHttpRequest();
 	const form = new FormData();
-	let url = "./php/get_all.php";
+	const url = "./php/get_all.php";
 	if (option !== 'all') {
-		url = "./php/get_some.php";
 		form.append('option', option);
 	}
 //	form.append('img_get', img_get); ===============================
 	form.append('table', table);
-	xhr.open('POST', url, true);
+	xhr.open('POST', url, asynchronous);
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState ===4 && xhr.status === 200) {
 			let response = xhr.responseText;
@@ -52,7 +88,8 @@ function fillSortList() {
 	get('all', 'type', function(response) {
 		sortListArr = JSON.parse(response);
 		console.log(sortListArr);  // 디버깅 ========================
-		sortList.innerHTML = getSortListText(sortListArr);
+		refresh();
+		Dom.sortList.innerHTML = getSortListText(sortListArr);
 	});
 }
 
@@ -98,10 +135,9 @@ const exampleArr = {
 	}
 };
 */    //디버깅  ===================================
-function renderTable(Arr) {
+function renderTable(Arr, type) {
 	const length = Object.keys(Arr).length;
-	const table = document.getElementById('table');
-	let htmlText = "<tr>"
+	let htmlText = `<tr id='${type}'><td class='sort_br' colspan='${ELEMENTSINROW}'>${type}</td></tr><tr>`
 	for(let i = 0; i < length; i++) {
 		let imgHTML = "";
 		let infoHTML = "";
@@ -154,7 +190,7 @@ function renderTable(Arr) {
 
 		//테이블 ver 3
 		let imgSorce = menuInfo['img_src'];
-		imgHTML += `<td class='container'><button onclick='addOrder("${menuInfo.id}")'><img src='./php/get_image.php?img_src=${imgSorce}&extension=${imgSorce.slice(imgSorce.lastIndexOf('.')+1)}' width='300' height='300' alt='${menuInfo.name}'></button>`;
+		imgHTML += `<td class='container'><button onclick='addOrder("${menuInfo.id}","${menuInfo.name}","${menuInfo.price}")'><div class='img_container'><img src='./php/get_image.php?img_src=${imgSorce}&extension=${imgSorce.slice(imgSorce.lastIndexOf('.')+1)}' width='300' height='300' alt='${menuInfo.name}'></div></button>`;
 		infoHTML += `<div class='overlay'><ul class='info-text'><li><span class='name'>${menuInfo.name}</span>\n<sub class='price'> ${currency_type}${menuInfo.price}</sub></li><hr>\n<li class='description'>${menuInfo.description}</li></ul></div></td>`;
 		htmlText += imgHTML + infoHTML;
 		if ((i + 1) % ELEMENTSINROW === 0) {
@@ -162,10 +198,22 @@ function renderTable(Arr) {
 		}
 	}
 	console.log(htmlText);
-	table.innerHTML = htmlText + "</tr>";
+	Dom.table.innerHTML += htmlText + "</tr>";
 }
 
-function addOrder(id){};
+function addOrder(id, name, price){
+	if(Order.isin(id)) {
+		Order.orders[id]['number'] ++;
+		console.log('t');
+	}
+	else {
+		Order.orders[id] = { 'name' : name, 'price' : extractNumbers(price), 'number' : 1 };
+		console.log(Order.orders[id]);
+	}
+	Order.totalOrder ++;
+	Order.setTotalPrice();
+	Order.displayOrders();
+}
 
 
 /*
@@ -179,17 +227,24 @@ function showDescriptions(id){
 }
 */
 
+function extractNumbers(str) {
+	return Number(str.replace(/\D/g, ''));
+}
+
 function refresh() {
-	get('all','info', function(response) {
-		responseArr = JSON.parse(response);
-		Order.menuInfo = responseArr;
-		console.log(responseArr);   // 디버깅 ==========================
-		renderTable(responseArr);
-	}/*, true*/);
+	Dom.table.innerHTML = '';
+	for(let index in sortListArr){
+		let type = sortListArr[index]['type'];
+		get(type,'info', function(response) {
+			responseArr = JSON.parse(response);
+			console.log(responseArr);   // 디버깅 ==========================
+			renderTable(responseArr, type);
+		}/*, true*/, false);
+	}
 }
 
 fillSortList();
-refresh();
+
 
 
 /*

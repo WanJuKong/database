@@ -1,4 +1,4 @@
-const leastAccuracy = 0.75;
+const leastAccuracy = 0.1;
 const fix = 10;	
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.lang = 'en-Us';
@@ -15,6 +15,10 @@ recognition.onresult = function(event) {
 	}
 	console.log(`Result: ${transcript} / ${confidence.toFixed(fix) * 100}%`);
 	document.getElementById('recogResult').innerHTML += transcript + '<br>';
+	let scrollTo = document.getElementById('recogScroll');
+	scrollTo.scrollIntoView({
+		behavior: 'smooth'
+	});
 /*
 	for(let i = 0; i < event.results.length; i++) {
 		for(let j = 0; j < event.results[i].length; j++) {

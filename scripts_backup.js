@@ -39,7 +39,28 @@ class Input {
 		this.img_src.value = '';
 	}
 }
-
+/*
+const input = {
+	name : document.getElementById('name'),
+	price : document.getElementById('price'),
+	type : document.getElementById('type'),
+	description : document.getElementById('description'),
+	isFilled : function(){
+		if(this.name.value === '' 
+		|| this.price.value === ''
+		|| this.type.value === ''){
+			return false;
+		}
+		return true;
+	},
+	clear : function(){
+		this.name.value = '';
+		this.price.value = '';
+		this.type.value = '';
+		this.description.value = '';
+	}
+}
+*/
 
 function typeListSet(){
 	get_all('type', function(response) {

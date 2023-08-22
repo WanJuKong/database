@@ -4,8 +4,7 @@
 		<title> table order mainpage </title>
 		<meta charset="utf-8">
 		<meta name='viewport' content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="styles_main.css">
-		<link rel="stylesheet" href="styles_img_main.css">
+		<link rel="stylesheet" href="css.css">
 	</head>
 	<body>
 		<header>
@@ -23,8 +22,8 @@
 					</table>
 				</div>
 				<div id='order-list'>
-					<table>
-						<tr width='100%'>
+					<table width='100%'>
+						<tr>
 							<th>menu</th>
 							<th>price</th>
 							<th>count</th>
@@ -34,18 +33,27 @@
 					</table>
 				</div>
 			</div>
-			<div id='chat'>
-				<iframe class='fill' src="./stt/stt.html" width='1'></iframe>
-				<iframe class='fill' src="./tts/tts.html" width='1'></iframe>
+			<div id='etc'>
+				<div id='chat'>
+					<!---<iframe class='fill' src="./stt/stt.html" width='1'></iframe>--->
+					<div class='fill'>
+						<button type='button' onclick='recogStart()'>record</button>
+						<hr>
+						<div id='recogResult'></div>
+						<div id='recogScroll'></div>
+						<script src='./stt/stt.js'></script>
+					</div>
+					<iframe class='fill' src="./tts/tts.html" width='1'></iframe>
+				</div>
+				<div id='submit-area'>
+					<div id='totalPrice'></div>
+					<button id='submit-button' onclick='Order.submitOrder()'>Submit</button>
+				</div>
 			</div>
 		</div>
 		<footer>
 			Copyright 2023 juwan All rights reserved.
 		</footer>
-		<div id='submit-area'>
-			<div id='totalPrice'></div>
-			<button id='submit-button' onclick=''>Submit</button>
-		</div>
 		<script src="scripts_main.js"></script>
 	</body>
 </html>
