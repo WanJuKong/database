@@ -11,7 +11,9 @@ const Dom = {
 
 	totalPrice : document.getElementById('totalPrice'),
 
-	orders : document.getElementById('orders')
+	orders : document.getElementById('orders'),
+
+	chatbot : document.getElementById('chatbot-area-test')
 };
 
 let sortListArr;
@@ -182,6 +184,22 @@ function refresh() {
 			renderTable(responseArr, type);
 		}, false);
 	}
+}
+
+function chatbot_send(){
+	const xhr = new XMLHttpRequest();
+	const form = new FormData();
+	const url = "./php/chatbot.php";
+	form.append('option', Dom.chatbot.value);
+	Dom.chatbot.value = '';
+	xhr.open('POST', url, true);
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState === 4 && xhr.status === 200) {
+			let response = xhr.responseText;
+			console.log(response);
+		}
+	}
+	xhr.send(form);
 }
 
 fillSortList();

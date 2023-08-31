@@ -1,7 +1,7 @@
 const leastAccuracy = 0.1;
 const fix = 10;	
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.lang = 'en-Us';
+recognition.lang = 'ko-Kr';
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
